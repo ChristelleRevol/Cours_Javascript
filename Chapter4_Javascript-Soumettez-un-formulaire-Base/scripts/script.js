@@ -39,6 +39,49 @@ function afficherEmail(nom, email, score) {
 	location.href = mailto;
 }
 
+function validerNom(nom) {
+	if (nom.length < 2) {
+		throw new Error("Le nom est trop courts");
+	}
+}
+
+function validerEmail(email) {
+	let emailRegex = new RegExp("[a-z0'9-_.]+@[a-z0'9-_.]\\.[a-z0'9-_.]");
+	if (!emailRegex.test(email)) {
+		throw new Error("L'email n'est pas valide");
+	}
+}
+
+function afficherMessageErreur(message) {
+	let spanErreurMessage = document.getElementById("erreurMessage");
+
+	if (!spanErreurMessage) {
+		let popup = document.querySelector(".popup");
+		spanErreurMessage = document.createElement("span");
+		spanErreurMessage.id = "erreurMessage";
+
+		popup.append(spanErreurMessage);
+	}
+
+	spanErreurMessage.innertext = message;
+}
+
+function gereFormulaire(scoreEmail) {
+	try {
+		const baliseNom = document.getElementById("nom");
+		let nom = baliseNom.value;
+		validerNom(nom);
+
+		const baliseEmail = document.getElementById("email");
+		let email = baliseEmail.value;
+		validerEmail(email);
+		afficherMessageErreur("");
+		afficherEmail(nom, email, scoreEmail);
+	} catch (erreur) {
+		afficherMessageErreur(erreur.message);
+	}
+}
+
 /**
  * Cette fonction lance le jeu.
  * Elle demande à l'utilisateur de choisir entre "mots" et "phrases" et lance la boucle de jeu correspondante
@@ -88,18 +131,13 @@ function lancerJeu() {
 		});
 	}
 
+	//gererFormulaire(form)
+
 	let form = document.querySelector("form");
 	form.addEventListener("submit", (event) => {
 		event.preventDefault();
-		const baliseNom = document.getElementById("nom").value;
-		let nom = baliseNom.value;
-
-		const baliseEmail = document.getElementById("email").value;
-		let email = baliseEmail.value;
-
 		let scoreEmail = `$(score) / $(i)`;
-
-		afficherEmail(nom, email, emailScore);
+		gereFormulaire(scoreEmail);
 	});
 
 	afficherResultat(score, i);

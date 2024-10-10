@@ -31,13 +31,16 @@ function lancerJeu() {
 	// Initialisations
 	let score = 0;
 	let i = 0;
+	let listePropositions = listeMots;
 
 	let btnValiderMot = document.getElementById("btnValiderMot");
 	let inputEcriture = document.getElementById("inputEcriture");
-	afficherProposition(listeMots[i]);
+
+	afficherProposition(listePropositions[i]);
+
 	btnValiderMot.addEventListener("click", () => {
 		console.log(inputEcriture.value);
-		if (inputEcriture.value === listeMots[i]) {
+		if (inputEcriture.value === listePropositions[i]) {
 			score++;
 		}
 		i++;
@@ -47,9 +50,26 @@ function lancerJeu() {
 			afficherProposition("Le jeu est fini");
 			btnValiderMot.disabled = true;
 		} else {
-			afficherProposition(listeMots[i]);
+			afficherProposition(listePropositions[i]);
 		}
 	});
+
+	// Gestion de l'événement change sur les boutons radios.
+	let listeBtnRadio = document.querySelectorAll(".optionSource input");
+	for (let index = 0; index < listeBtnRadio.length; index++) {
+		listeBtnRadio[index].addEventListener("change", (event) => {
+			// Si c'est le premier élément qui a été modifié, alors nous voulons
+			// jouer avec la listeMots.
+			if (event.target.value === "1") {
+				listeProposition = listeMots;
+			} else {
+				// Sinon nous voulons jouer avec la liste des phrases
+				listeProposition = listePhrases;
+			}
+			// Et on modifie l'affichage en direct.
+			afficherProposition(listeProposition[i]);
+		});
+	}
 
 	afficherResultat(score, i);
 }
